@@ -2,7 +2,7 @@
 from easy_select2.utils import select2_modelform
 from nested_inline.admin import NestedModelAdmin
 from django.contrib import admin
-from import_export import resources
+# from import_export import resources
 
 from main.admin import *
 from core_settings.settings import COMPANY_TITLE
@@ -63,9 +63,9 @@ class PurchaseRecordAdmin(BasePurchaseRecordAdmin):
     )
 
 
-class PurchaseResource(resources.ModelResource):
-    class Meta:
-        model = PurchaseRecord
+# class PurchaseResource(resources.ModelResource):
+#     class Meta:
+#         model = PurchaseRecord
 
 
 admin.site.register(Distributor, DistributorAdmin)
