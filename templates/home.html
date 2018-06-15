@@ -1,0 +1,11 @@
+{% extends 'common/base.html' %}
+{% block content %}
+    <div class="container" style="align-items: center">
+        <div class="custom-center" style="width: 65%">
+            <span class="display-4">
+                Welcome to <strong>{{ SITE_NAME }}</strong>
+            </span>
+        </div>
+        {% include 'customize/contact.html' %}
+    </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block content %}
+        <div class="container">
+			<header>
+				<h1><strong>Login</strong></h1>
+			</header>
+			
+			<section class="main">
+				<form class="form-1" method="post">
+                    {% csrf_token %}
+					<p class="field">
+						{{ form.username }}
+						<i class="icon-user icon-large"></i>
+					</p>
+						<p class="field">
+							{{ form.password }}
+							<i class="icon-lock icon-large"></i>
+					</p>
+					<p class="submit">
+						<button id="login" type="submit" name="submit"><i class="icon-arrow-right icon-large"></i></button>
+					</p>
+				</form>
+			</section>
+        </div>
+{% endblock %}

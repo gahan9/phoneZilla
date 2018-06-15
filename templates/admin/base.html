@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% load tags %}
+{% block title %}{{ site_title|default:_('Django site admin') }}{% endblock %}
+{% block branding %}
+<a href="#">
+</a>
+    <img src="{{ SITE_LOGO }}" class="img-wrap"/>
+{% endblock %}
+{% block footer_links %}
+    <a href="#" target="_blank" class="icon"><i class="icon-question-sign"></i>Support</a>
+    <a href="#" target="_blank" class="icon"><i class="icon-bookmark"></i>Licence</a>
+    <a href="https://github.com/gahan9/inventory_management/issues" target="_blank" class="icon"><i class="icon-comment"></i>Report
+        a bug</a>
+{% endblock %}
+
+{% block copyright %}
+    Copyright &copy; 2017-{% now "Y" %} {{ SITE_NAME }}<br>Developed by
+    <a href="http://gahan9.github.com" target="_blank">Gahan Saraiya</a>
+{% endblock %}
+
+
