@@ -12,7 +12,63 @@ from core_settings.settings import PRODUCT_TYPE
 
 __author__ = "Gahan Saraiya"
 
-__all__ = ['BaseDistributor', 'BaseEffectiveCost', 'BaseProductRecord', 'BasePurchaseRecord', 'BaseCustomer', 'BaseSaleRecord']
+__all__ = ['BaseDistributor', 'BaseEffectiveCost', 'BaseProductRecord', 'BasePurchaseRecord', 'BaseCustomer', 'BaseSaleRecord',
+           'BaseAddress', 'BaseCity', 'BaseState', 'BaseCountry']
+
+
+class BaseState(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        abstract = True
+
+
+class BaseCity(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        abstract = True
+
+
+class BaseCountry(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        abstract = True
+
+
+class BaseAddress(models.Model):
+    contact_name = models.CharField(max_length=255, null=True, blank=True,
+                                    verbose_name=_("Contact Person Name"))
+    address_one = models.TextField(blank=True, null=True,
+                                   verbose_name=_("Address Line 1"))
+    address_two = models.TextField(blank=True, null=True,
+                                   verbose_name=_("Address Line 2"))
+    zip_code = models.CharField(max_length=6, blank=True, null=True,
+                                verbose_name=_("Postal Code"))
+
+    @property
+    def printable_address(self):
+        address = ""
+        address += "{}\n".format(self.contact_name) if self.contact_name else ""
+        address += "{}\n".format(self.address_one) if self.address_one else ""
+        address += "{}\n".format(self.address_two) if self.address_two else ""
+        return address
+
+    def __str__(self):
+        return self.printable_address[:20] + "..." if len(self.printable_address) > 20 else self.printable_address
+
+    class Meta:
+        abstract = True
 
 
 class BaseDistributor(models.Model):

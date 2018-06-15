@@ -10,6 +10,39 @@ from inventory_management.models import ProductRecord
 __all__ = ["CustomerDetail", "SaleRecord", "SaleEffectiveCost"]
 
 
+class City(BaseCity):
+    pass
+
+
+class State(BaseState):
+    pass
+
+
+class Country(BaseCountry):
+    pass
+
+
+class Address(BaseAddress):
+    city = models.ForeignKey(City, blank=True, null=True, on_delete=models.PROTECT)
+    state = models.ForeignKey(State, blank=True, null=True, on_delete=models.PROTECT)
+    country = models.ForeignKey(Country, blank=True, null=True, on_delete=models.PROTECT)
+
+    @property
+    def printable_address(self):
+        address = ""
+        address += "{}\n".format(self.contact_name) if self.contact_name else ""
+        address += "{}\n".format(self.address_one) if self.address_one else ""
+        address += "{}\n".format(self.address_two) if self.address_two else ""
+        address += "{},".format(self.city.name) if self.city else ""
+        address += "{}".format(self.state.name) if self.state else ""
+        address += "-{}\n".format(self.zip_code) if self.zip_code else ""
+        address += "{}".format(self.country) if self.country else ""
+        return address
+
+    def __str__(self):
+        return self.printable_address[:20] + "..." if len(self.printable_address) > 20 else self.printable_address
+
+
 def increment_invoice_number():
     last_invoice = SaleRecord.objects.all().order_by('id').last()
     if not last_invoice:
@@ -68,6 +101,9 @@ class SaleRecord(BaseSaleRecord):
         verbose_name=_("Total Invoice Amount (considered in case of no book entries added)"),
         help_text=_("Total Payable Invoice Amount [Discounted Rate]*\n*for migration purpose only"))
     customer = models.ForeignKey(CustomerDetail, null=True, blank=True, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, blank=True, null=True, on_delete=models.PROTECT,
+                                verbose_name=_("Postal Address"),
+                                help_text=_("Address of distributor"))
 
     @property
     def get_total(self):

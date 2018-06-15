@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'nested_inline',
     'easy_select2',
     'phonenumber_field',
-    'import_export',
+    # 'import_export',
 ]
 
 MIDDLEWARE = [
@@ -188,3 +188,9 @@ PRODUCT_TYPE = "Mobile"
 COMPANY_TITLE = "PhoneZilla"  # Title of your company
 COMPANY_LOGO = "http://icons.iconarchive.com/icons/graphicloads/100-flat-2/256/mobile-2-icon.png"
 COPYRIGHT_SINCE = 2018
+
+# Invoice Config
+INV_LOGO = "http://icons.iconarchive.com/icons/graphicloads/100-flat-2/256/mobile-2-icon.png"
+INV_MODULE = os.path.join(BASE_DIR, "main", "utils.py")
+INV_CURRENCY_SYMBOL = "₹"
+INV_CURRENCY = "Indian Rupees"
