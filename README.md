@@ -21,3 +21,12 @@ Features:
 GST flow:
 1. add during product addition in system
 2. add during sale
+
+
+Proposing feature (if internet active connection):
+--------------------------------------------------
+- send invoice to customer email
+
+(possible with hosting only)
+- allow customer to check warranty status in portal
+- allow customer to download e-invoice
