@@ -76,9 +76,16 @@ class PurchaseRecord(BasePurchaseRecord):
         return ' | \n'.join([p.get_detail for p in self.items.all()])
 
 
-@receiver(post_save, sender=PurchaseRecord, dispatch_uid="update_stock_count")
+# @receiver(post_save, sender=PurchaseRecord, dispatch_uid="update_stock_count")
+# def update_stock(sender, instance, created, **kwargs):
+#     if created:
+#         for item in instance.items.all():
+#             item.cost.available_stock += item.quantity
+#             item.cost.save()
+
+
+@receiver(post_save, sender=EffectiveCost, dispatch_uid="update_stock_count")
 def update_stock(sender, instance, created, **kwargs):
     if created:
-        for item in instance.items.all():
-            item.cost.available_stock += item.quantity
-            item.cost.save()
+        instance.cost.available_stock += instance.quantity
+        instance.cost.save()
