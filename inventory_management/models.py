@@ -1,6 +1,9 @@
 # coding=utf-8
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
+
 from main.models import *
 from core_settings.settings import PRODUCT_TYPE, PRODUCT_MAKER
 
@@ -54,7 +57,7 @@ class EffectiveCost(BaseEffectiveCost):
 
 
 class PurchaseRecord(BasePurchaseRecord):
-    items = models.ManyToManyField(EffectiveCost, blank=True)
+    items = models.ManyToManyField(EffectiveCost)  # blank=True not mentioned to enable stock management
     purchased_from = models.ForeignKey(
         Distributor, on_delete=models.CASCADE,
         verbose_name=_("Supplier Name"),
@@ -72,3 +75,10 @@ class PurchaseRecord(BasePurchaseRecord):
     def get_items(self):
         return ' | \n'.join([p.get_detail for p in self.items.all()])
 
+
+@receiver(post_save, sender=PurchaseRecord, dispatch_uid="update_stock_count")
+def update_stock(sender, instance, created, **kwargs):
+    if created:
+        for item in instance.items.all():
+            item.cost.available_stock += item.quantity
+            item.cost.save()

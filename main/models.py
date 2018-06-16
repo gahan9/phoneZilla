@@ -1,8 +1,6 @@
 # coding=utf-8
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models.signals import post_save, pre_save
-from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
@@ -76,9 +74,11 @@ class BaseDistributor(models.Model):
                             verbose_name=_("Company Name"),
                             help_text=_("Enter Name of the company from which you are making your purchase"))
     contact_number = PhoneNumberField(blank=True, null=True,
-                                      verbose_name=_("Contact Number"))
+                                      verbose_name=_("Contact Number"),
+                                      help_text=_("Enter Phone Number with country code: i.e. +919988776655"))
     alternate_contact_number = PhoneNumberField(blank=True, null=True,
-                                                verbose_name=_("Alternate Contact Number"))
+                                                verbose_name=_("Alternate Contact Number"),
+                                                help_text=_("Enter Phone Number with country code: i.e. +919988776655"))
     fax_number = models.IntegerField(blank=True, null=True,
                                      verbose_name=_("Fax Number"))
     address = models.TextField(_("Postal Address"), blank=True, null=True,
@@ -221,9 +221,11 @@ class BaseCustomer(models.Model):
                             verbose_name=_("Customer Name"),
                             help_text=_("Enter Name of the customer who is purchasing"))
     contact_number = PhoneNumberField(blank=True, null=True,
-                                      verbose_name=_("Contact Number"))
+                                      verbose_name=_("Contact Number"),
+                                      help_text=_("Enter Phone Number with country code: i.e. +919988776655"))
     alternate_contact_number = PhoneNumberField(blank=True, null=True,
-                                                verbose_name=_("Alternate Contact Number"))
+                                                verbose_name=_("Alternate Contact Number"),
+                                                help_text=_("Enter Phone Number with country code: i.e. +919988776655"))
     address = models.TextField(_("Postal Address"), blank=True, null=True,
                                help_text=_("Address of distributor"))
     email_address = models.EmailField(blank=True, null=True,

@@ -31,7 +31,7 @@ class ProductRecordAdmin(NestedModelAdmin):
     inlines = [EffectiveCostInline]
     search_fields = ["name", "launched_by"]
     list_display = ["id", "name", "price", "product_launch_date", "launched_by",
-                    "version",
+                    "version", "available_stock"
                     ]
 
 
@@ -39,7 +39,7 @@ class EffectiveCostAdmin(BaseEffectiveCostAdmin):
     form = EffectiveCostForm
     search_fields = ["discount"]
     list_display = ["id", "cost", "discount",
-                    "get_effective_cost", "get_total_effective_cost"]
+                    "get_effective_cost", "get_total_effective_cost", "quantity"]
     readonly_fields = ["get_effective_cost", "get_total_effective_cost"]
 
 

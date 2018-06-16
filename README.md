@@ -30,3 +30,8 @@ Proposing feature (if internet active connection):
 (possible with hosting only)
 - allow customer to check warranty status in portal
 - allow customer to download e-invoice
+
+
+#TODO:
+manage purchase/sale stock with signal
+bill delete - update stock detail
