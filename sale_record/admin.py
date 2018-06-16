@@ -7,6 +7,14 @@ class CustomerDetailAdmin(BaseCustomerDetailAdmin):
     pass
 
 
+class BaseSaleEffectiveCostAdmin(admin.ModelAdmin):
+    def has_change_permission(self, *args, **kwargs):
+        return False
+
+    def has_delete_permission(self, *args, **kwargs):
+        return False
+
+
 class SaleRecordAdmin(BaseSaleRecordAdmin):
     search_fields = ["name", "address"]
     list_display = ["id", "invoice_id", "sale_date", "get_items",

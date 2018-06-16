@@ -58,7 +58,7 @@ class PurchaseRecordAdmin(BasePurchaseRecordAdmin):
     add_fieldsets = (
         (None, {'fields': ["invoice_id"]}),
         ("Items", {'fields': ["items"]}),
-        ("Payment Details", {'fields': ["get_total", "payment_mode", "payment_status"]}),
+        ("Payment Details", {'fields': ["payment_mode", "payment_status"]}),
         ("Other Details", {'fields': ["purchased_from", "purchase_date"]}),
     )
 

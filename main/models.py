@@ -121,7 +121,7 @@ class BaseProductRecord(models.Model):
                        default=0, default_currency='INR',
                        verbose_name=_("MRP of " + PRODUCT_TYPE))
     available_stock = models.IntegerField(blank=True, null=True,
-                                          default=1, validators=[MinValueValidator(0)])
+                                          default=0, validators=[MinValueValidator(0)])
     product_image = models.ImageField(upload_to='media/uploads/', blank=True, null=True)
     hsn_code = models.CharField(max_length=8, blank=True, null=True)
     tax = models.IntegerField(blank=True, null=True,
@@ -183,8 +183,7 @@ class BasePurchaseRecord(models.Model):
                                   verbose_name=_("Enter Invoice Number"),
                                   help_text=_("Enter Order/Invoice Number"))
 
-    purchase_date = models.DateField(blank=True, null=True,
-                                     default=timezone.now,
+    purchase_date = models.DateField(default=timezone.now,
                                      help_text=_("Enter date of purchase/invoice"))
     delivery_date = models.DateField(blank=True, null=True,
                                      help_text=_("Date of order received"))
@@ -194,7 +193,7 @@ class BasePurchaseRecord(models.Model):
         default_currency='INR', max_digits=11,
         verbose_name=_("Total Invoice Amount"),
         help_text=_("Total Payable Invoice Amount [Discounted Rate]"))
-    payment_mode = models.IntegerField(choices=PAYMENT_MODE, blank=True, null=True)
+    payment_mode = models.IntegerField(choices=PAYMENT_MODE)
     payment_status = models.BooleanField(
         default=False,
         verbose_name=_("Payment Status (in transit/dispute)"),

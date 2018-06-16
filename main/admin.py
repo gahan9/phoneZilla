@@ -37,6 +37,12 @@ class BaseEffectiveCostAdmin(admin.ModelAdmin):
     list_display = ["id", "cost", "discount", "effective_cost", "total_effective_cost"]
     readonly_fields = ["effective_cost", "total_effective_cost"]
 
+    def has_change_permission(self, *args, **kwargs):
+        return False
+
+    def has_delete_permission(self, *args, **kwargs):
+        return False
+
 
 class BasePurchaseRecordAdmin(admin.ModelAdmin):
     search_fields = ["name", "address"]
@@ -53,7 +59,7 @@ class BasePurchaseRecordAdmin(admin.ModelAdmin):
     add_fieldsets = (
         (None, {'fields': ["invoice_id"]}),
         ("Items", {'fields': ["items"]}),
-        ("Payment Details", {'fields': ["total_amount", "payment_mode", "payment_status"]}),
+        ("Payment Details", {'fields': ["payment_mode", "payment_status"]}),
         ("Other Details", {'fields': ["purchased_from", "purchase_date"]}),
     )
 

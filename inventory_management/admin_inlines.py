@@ -11,8 +11,11 @@ __all__ = ['EffectiveCostInline', 'PurchaseRecordInline']
 class EffectiveCostInline(NestedStackedInline):
     model = EffectiveCost
     extra = 0
+    can_delete = False
+    readonly_fields = ["quantity", "discount"]
 
 
 class PurchaseRecordInline(NestedStackedInline):
     model = PurchaseRecord
     extra = 0
+    can_delete = False
