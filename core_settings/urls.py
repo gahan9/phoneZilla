@@ -26,4 +26,5 @@ urlpatterns = [
     path('nested_admin/', include('nested_admin.urls')),
     path('accounts/', include('accounts.urls')),
     path('', include('inventory_management.urls')),
+    path('sales/', include('sale_record.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

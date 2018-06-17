@@ -1,7 +1,11 @@
 # coding=utf-8
+import os
+
 from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
+from django.urls import reverse_lazy
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from djmoney.models.fields import MoneyField
 
@@ -9,7 +13,9 @@ from main.models import *
 from core_settings.settings import PRODUCT_TYPE
 from inventory_management.models import ProductRecord
 
-__all__ = ["CustomerDetail", "SaleRecord", "SaleEffectiveCost"]
+__all__ = ["CustomerDetail", "SaleRecord", "SaleEffectiveCost", "PathMapping", "Address", "City", "State", "Country"]
+
+__author__ = "Gahan Saraiya"
 
 
 class City(BaseCity):
@@ -56,6 +62,18 @@ def increment_invoice_number():
     return new_invoice_no
 
 
+class PathMapping(models.Model):
+    TYPE = (
+        (1, "Invoice Storage"),
+        (2, "Other")
+    )
+    invoice_path = models.TextField()
+    category = models.IntegerField(choices=TYPE, default=1)
+
+    class Meta:
+        verbose_name = "Store Default path"
+
+
 class SaleEffectiveCost(BaseEffectiveCost):
     """
     This model is only to preserve effective cost of item
@@ -88,7 +106,9 @@ class SaleEffectiveCost(BaseEffectiveCost):
 
 
 class CustomerDetail(BaseCustomer):
-    pass
+    address = models.ForeignKey(Address, blank=True, null=True, on_delete=models.PROTECT,
+                                verbose_name=_("Postal Address"),
+                                help_text=_("Address"))
 
 
 class SaleRecord(BaseSaleRecord):
@@ -99,7 +119,7 @@ class SaleRecord(BaseSaleRecord):
     customer = models.ForeignKey(CustomerDetail, null=True, blank=True, on_delete=models.CASCADE)
     address = models.ForeignKey(Address, blank=True, null=True, on_delete=models.PROTECT,
                                 verbose_name=_("Postal Address"),
-                                help_text=_("Address of distributor"))
+                                help_text=_("Address"))
 
     @property
     def get_total(self):
@@ -108,6 +128,16 @@ class SaleRecord(BaseSaleRecord):
     @property
     def get_items(self):
         return ' | \n'.join([p.get_detail for p in self.items.all()])
+
+    @property
+    def printable_sale_date(self):
+        return self.sale_date.strftime("%d %b %Y")
+
+    def get_reference_id(self):
+        _id = self.id
+        _url = reverse_lazy('generate_invoice', kwargs={"pk": _id})
+        _href = "<a href='{0}'>print</a>".format(_url)
+        return format_html(_href)
 
 
 @receiver(m2m_changed, sender=SaleRecord.items.through, dispatch_uid="update_stock_count")

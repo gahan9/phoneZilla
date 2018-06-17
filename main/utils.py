@@ -1,9 +1,15 @@
+# coding=utf-8
+from decimal import Decimal
+
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import Table
 from reportlab.lib.pagesizes import A4, A5
 from reportlab.lib.units import cm
 from django.http import HttpResponse
 import os
+
+from core_settings.settings import INV_CURRENCY
+
 try:
     from django.utils import importlib
 except ImportError:
@@ -12,12 +18,11 @@ except ImportError:
 from core_settings import settings
 
 
-def format_currency(amount, currency):
-    if currency:
-        return u"{1.pre_symbol} {0:.2f} {1.post_symbol} {1}".format(amount, currency)
-
-    return u"%s %.2f %s" % (
-        settings.INV_CURRENCY_SYMBOL, amount, settings.INV_CURRENCY
+def format_currency(amount, tax=None):
+    if tax:
+        amount -= amount * Decimal(tax/100)
+    return "{} {:.2f} {}".format(
+        settings.INV_CURRENCY_SYMBOL, amount, ""
     )
 
 
@@ -117,35 +122,45 @@ def draw_pdf(buffer, invoice):
 
     # Client address
     textobject = canvas.beginText(1.5 * cm, -2.5 * cm)
-    if invoice.address.contact_name:
-        textobject.textLine(invoice.address.contact_name)
-    textobject.textLine(invoice.address.address_one)
-    if invoice.address.address_two:
-        textobject.textLine(invoice.address.address_two)
-    textobject.textLine(invoice.address.town)
-    if invoice.address.country:
-        textobject.textLine(invoice.address.country)
-    textobject.textLine(invoice.address.postcode)
-    textobject.textLine(invoice.address.country)
+    contact_name = invoice.customer.name
+    contact_number = invoice.customer.contact_number.as_international
+    if contact_name:
+        textobject.textLine(contact_name)
+    if invoice.customer.address:
+        if invoice.customer.address.address_one:
+            textobject.textLine(invoice.customer.address.address_one)
+        if invoice.customer.address.address_two:
+            textobject.textLine(invoice.customer.address.address_two)
+        if invoice.customer.address.city:
+            textobject.textLine(invoice.customer.address.city.name)
+        # if invoice.customer.address.state:
+        #     textobject.textLine(invoice.address.state.name)
+        if invoice.customer.address.zip_code:
+            textobject.textLine(invoice.customer.address.zip_code)
+        if invoice.customer.address.country:
+            textobject.textLine(invoice.customer.address.country.name)
+    if contact_number:
+        textobject.textLine(contact_number)
     canvas.drawText(textobject)
 
     # Info
     textobject = canvas.beginText(1.5 * cm, -6.75 * cm)
     textobject.textLine(u'Invoice ID: %s' % invoice.invoice_id)
-    textobject.textLine(u'Invoice Date: %s' % invoice.invoice_date)
-    textobject.textLine(u'Client: %s' % invoice.address.contact_name)
+    textobject.textLine(u'Invoice Date: %s' % invoice.printable_sale_date)
+    textobject.textLine(u'Client: %s' % invoice.customer.name)
     canvas.drawText(textobject)
 
     # Items
     data = [[u'Quantity', u'Description', "Tax", "Amount", u'Total'], ]
-    # for item in invoice.items.all():
-    #     data.append([
-    #         item.quantity,
-    #         item.description,
-    #         format_currency(item.unit_price, invoice.currency),
-    #         format_currency(item.total(), invoice.currency)
-    #     ])
-    data.append([u'', u'', '', u'Total:', invoice.total()])
+    for item in invoice.items.all():
+        data.append([
+            item.quantity,
+            item.cost.name,
+            "{} %".format(item.cost.tax),
+            format_currency(item.cost.price.amount, tax=item.cost.tax),
+            format_currency(item.cost.price.amount)
+        ])
+    data.append([u'', u'', '', u'Total:', str(invoice.get_total)])
     table = Table(data, colWidths=[2 * cm, 9 * cm, 2 * cm, 3 * cm, 3 * cm])
     table.setStyle([
         ('FONT', (0, 0), (-1, -1), 'Helvetica'),
@@ -164,6 +179,5 @@ def draw_pdf(buffer, invoice):
 
 
 if __name__ == "__main__":
-    invoice = Invoice()
     location = os.path.join(settings.BASE_DIR, "invoice.pdf")
-    draw_pdf(location, invoice)
+    draw_pdf(location, Invoice())

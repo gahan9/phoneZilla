@@ -33,5 +33,4 @@ Proposing feature (if internet active connection):
 
 
 #TODO:
-manage purchase/sale stock with signal
 bill delete - update stock detail

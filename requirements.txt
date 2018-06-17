@@ -40,5 +40,6 @@ traitlets==4.3.2
 uritemplate==3.0.0
 urllib3==1.22
 wcwidth==0.1.7
-django-phonenumber-field
+django-phonenumber-field  # phone number validation
 # django-import-export
+reportlab  # pdf utility
