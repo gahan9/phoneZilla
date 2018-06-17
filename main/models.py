@@ -182,7 +182,6 @@ class BasePurchaseRecord(models.Model):
     invoice_id = models.CharField(max_length=80, blank=True, null=True,
                                   verbose_name=_("Enter Invoice Number"),
                                   help_text=_("Enter Order/Invoice Number"))
-
     purchase_date = models.DateField(default=timezone.now,
                                      help_text=_("Enter date of purchase/invoice"))
     delivery_date = models.DateField(blank=True, null=True,
