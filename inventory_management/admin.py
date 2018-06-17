@@ -41,13 +41,22 @@ class EffectiveCostAdmin(BaseEffectiveCostAdmin):
     list_display = ["id", "cost", "discount",
                     "get_effective_cost", "get_total_effective_cost", "quantity"]
     readonly_fields = ["get_effective_cost", "get_total_effective_cost"]
+    add_fieldsets = (
+        (None, {'fields': ["cost", "discount", "quantity"]}),
+    )
+
+    def get_fieldsets(self, request, obj=None):
+        if not obj:
+            return self.add_fieldsets
+        return super().get_fieldsets(request, obj)
 
 
 class PurchaseRecordAdmin(BasePurchaseRecordAdmin):
     form = PurchaseRecordForm
-    list_display = ["id", "invoice_id", "purchased_from", "purchase_date", "get_items",
-                    "get_total", "payment_mode", "payment_status"
+    list_display = ["id", "invoice_id", "purchased_from", "purchase_date", "get_bill_items",
+                    "get_bill_amount",
                     ]
+    list_filter = ["payment_status", "payment_mode"]
     readonly_fields = ['get_total']
     fieldsets = (
         (None, {'fields': ["invoice_id"]}),

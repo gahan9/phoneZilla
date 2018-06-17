@@ -47,9 +47,9 @@ class EffectiveCost(BaseEffectiveCost):
 
     @property
     def get_detail(self):
-        return "{} :{} @{}%= {}; {} per item {} for total item".format(
-            self.cost.name, self.cost.price, self.discount,
-            self.get_effective_cost, self.quantity, self.get_total_effective_cost)
+        return "{} >> [Disc. {}%] [MRP: {}] [Qty. {}] [item cost: {}] [total bill: {}]".format(
+            self.cost.name,  self.discount, self.cost.price, self.quantity,
+            self.get_effective_cost, self.get_total_effective_cost)
 
     def clean(self):
         self.cost.available_stock = self.cost.available_stock + self.quantity
@@ -71,27 +71,24 @@ class PurchaseRecord(BasePurchaseRecord):
     @property
     def get_total(self):
         return sum([product.get_total_effective_cost for product in self.items.all()])
-        try:
-            return sum([product.get_total_effective_cost for product in self.items.all()])
-        except TypeError as e:
-            print("Exception in calculating total amount... : " + str(e))
-            return 'N/A'
 
     @property
     def get_items(self):
         return ' | \n'.join([p.get_detail for p in self.items.all()])
 
+    def get_bill_amount(self):
+        return self.get_total
+
+    def get_bill_items(self):
+        return self.get_items
+
+    get_bill_items.short_description = "Items"
+    get_bill_amount.short_description = "Bill Amount"
+
 
 @receiver(m2m_changed, sender=PurchaseRecord.items.through, dispatch_uid="update_stock_count")
 def update_stock(sender, instance, action, **kwargs):
-    # print("received signal for PurchaseRecord: {}".format(instance))
-    # print("items: --- >> {}".format(instance.items.all()))
     if action is "post_add":
-        # print("signal type: create for item: {} - {}".format(instance.id, instance))
         for item in instance.items.all():
-            # print("Summary: available_stock: {}, new Qty. {}".format(item.cost.available_stock, item.quantity))
             item.cost.available_stock += item.quantity
             item.cost.save()
-            # print("instance detail updated")
-            # print("Summary: available_stock: {}".format(item.cost.available_stock))
-            # print(">> available_stock-- {}".format(ProductRecord.objects.get(pk=item.cost.id).available_stock))

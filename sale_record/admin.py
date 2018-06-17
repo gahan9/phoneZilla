@@ -18,19 +18,19 @@ class BaseSaleEffectiveCostAdmin(admin.ModelAdmin):
 class SaleRecordAdmin(BaseSaleRecordAdmin):
     search_fields = ["name", "address"]
     list_display = ["id", "invoice_id", "sale_date", "get_items",
-                    "amount", "payment_mode", "customer"
+                    "payment_mode", "customer"
                     ]
     list_filter = ["cancelled"]
     readonly_fields = ["get_total"]
     fieldsets = (
         (None, {'fields': ["invoice_id", "sale_date", "cancelled"]}),
-        ("Items", {'fields': ["items", "amount"]}),
+        ("Items", {'fields': ["items"]}),
         ("Payment Details", {'fields': ["get_total", "payment_mode", "payment_status"]}),
         ("Customer Details", {'fields': ["customer"]}),
     )
     add_fieldsets = (
         (None, {'fields': ["invoice_id", "sale_date", "cancelled"]}),
-        ("Items", {'fields': ["items", "amount"]}),
+        ("Items", {'fields': ["items"]}),
         ("Payment Details", {'fields': ["payment_mode", "payment_status"]}),
         ("Customer Details", {'fields': ["customer"]}),
     )

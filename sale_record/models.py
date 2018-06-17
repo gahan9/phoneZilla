@@ -1,5 +1,7 @@
 # coding=utf-8
 from django.db import models
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from djmoney.models.fields import MoneyField
 
@@ -71,15 +73,15 @@ class SaleEffectiveCost(BaseEffectiveCost):
 
     @property
     def get_detail(self):
-        return "{} :{} @{}%= {}; {} per item {} for total item".format(
-            self.cost.name, self.cost.price, self.discount,
-            self.get_effective_cost, self.quantity, self.get_total_effective_cost)
+        return "{} >> [Disc. {}%] [MRP: {}] [Qty. {}] [item cost: {}] [total bill: {}]".format(
+            self.cost.name,  self.discount, self.cost.price, self.quantity,
+            self.get_effective_cost, self.get_total_effective_cost)
 
     def clean(self):
         self.cost.available_stock = self.cost.available_stock + self.quantity
 
     def __str__(self):
-        return "{} - {}% @ {}".format(self.cost.name, self.discount, self.cost.price)
+        return "{} >> [Disc. {}%] [MRP: {}] [Qty. {}]".format(self.cost.name, self.discount, self.cost.price, self.quantity)
 
     class Meta:
         verbose_name = verbose_name_plural = "Effective cost of " + PRODUCT_TYPE
@@ -94,12 +96,12 @@ class SaleRecord(BaseSaleRecord):
                                   verbose_name=_("Enter Invoice Number"),
                                   help_text=_("Enter Order/Invoice Number"))
     items = models.ManyToManyField(SaleEffectiveCost, blank=True)
-    amount = MoneyField(
-        decimal_places=2, default=0,
-        blank=True, null=True,
-        default_currency='INR', max_digits=11,
-        verbose_name=_("Total Invoice Amount (considered in case of no book entries added)"),
-        help_text=_("Total Payable Invoice Amount [Discounted Rate]*\n*for migration purpose only"))
+    # amount = MoneyField(
+    #     decimal_places=2, default=0,
+    #     blank=True, null=True,
+    #     default_currency='INR', max_digits=11,
+    #     verbose_name=_("Total Invoice Amount (considered in case of no book entries added)"),
+    #     help_text=_("Total Payable Invoice Amount [Discounted Rate]*\n*for migration purpose only"))
     customer = models.ForeignKey(CustomerDetail, null=True, blank=True, on_delete=models.CASCADE)
     address = models.ForeignKey(Address, blank=True, null=True, on_delete=models.PROTECT,
                                 verbose_name=_("Postal Address"),
@@ -116,3 +118,11 @@ class SaleRecord(BaseSaleRecord):
     @property
     def get_items(self):
         return ' | \n'.join([p.get_detail for p in self.items.all()])
+
+
+@receiver(m2m_changed, sender=SaleRecord.items.through, dispatch_uid="update_stock_count")
+def update_stock(sender, instance, action, **kwargs):
+    if action is "post_add":
+        for item in instance.items.all():
+            item.cost.available_stock -= item.quantity
+            item.cost.save()
