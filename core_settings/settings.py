@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Django settings for core_settings project.
 
@@ -188,10 +189,18 @@ PRODUCT_TYPE = "Mobile"
 COMPANY_TITLE = "PhoneZilla"  # Title of your company
 COMPANY_LOGO = "http://icons.iconarchive.com/icons/graphicloads/100-flat-2/256/mobile-2-icon.png"
 COPYRIGHT_SINCE = 2018
+COMPANY_EMAIL = "company@example.com"
+COMPANY_CONTACT_NUMBER = "+91 99991 99991"
+COMPANY_WEBSITE = ""
 
 # Invoice Config
-INV_LOGO = "http://icons.iconarchive.com/icons/graphicloads/100-flat-2/256/mobile-2-icon.png"
+INV_ROOT = os.path.join(MEDIA_ROOT, "invoices")
+if not os.path.exists(INV_ROOT):
+    os.makedirs(INV_ROOT)
+# INV_LOGO = "http://icons.iconarchive.com/icons/graphicloads/100-flat-2/256/mobile-2-icon.png"  # Web Path
+INV_LOGO = os.path.join(STATICFILES_DIRS[0], "assets", "logos", "mobile-icon.png")
 INV_MODULE = os.path.join(BASE_DIR, "main", "utils.py")
-# INV_CURRENCY_SYMBOL = "₹"
-INV_CURRENCY_SYMBOL = "INR"
+INV_CURRENCY_SYMBOL = "₹"
+INV_CURRENCY_PREFIX = "INR"
 INV_CURRENCY = "Indian Rupees"
+GST_NUMBER = "00000000"

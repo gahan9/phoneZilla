@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+from decimal import Decimal
 
 from django.db import models
 from django.db.models.signals import m2m_changed
@@ -82,8 +83,20 @@ class SaleEffectiveCost(BaseEffectiveCost):
     cost = models.ForeignKey(ProductRecord, on_delete=models.CASCADE)
 
     @property
+    def product_amount(self):
+        return self.cost.price.amount
+
+    @property
+    def calculate_discount(self):
+        return (self.product_amount * Decimal(self.discount)) / 100
+
+    @property
+    def tax_amount(self):
+        return (self.product_amount * Decimal(self.cost.tax)) / 100
+
+    @property
     def get_effective_cost(self):
-        return (self.cost.price.amount * (100 - self.discount)) / 100 if self.discount else self.cost.price.amount
+        return self.product_amount - self.calculate_discount
 
     @property
     def get_total_effective_cost(self):
@@ -115,11 +128,8 @@ class SaleRecord(BaseSaleRecord):
     invoice_id = models.CharField(max_length=500, default=increment_invoice_number, null=True, blank=True,
                                   verbose_name=_("Enter Invoice Number"),
                                   help_text=_("Enter Order/Invoice Number"))
-    items = models.ManyToManyField(SaleEffectiveCost, blank=True)
+    items = models.ManyToManyField(SaleEffectiveCost)
     customer = models.ForeignKey(CustomerDetail, null=True, blank=True, on_delete=models.CASCADE)
-    address = models.ForeignKey(Address, blank=True, null=True, on_delete=models.PROTECT,
-                                verbose_name=_("Postal Address"),
-                                help_text=_("Address"))
 
     @property
     def get_total(self):

@@ -7,15 +7,16 @@ from reportlab.lib.pagesizes import A4, A5
 from reportlab.lib.units import cm
 from django.http import HttpResponse
 import os
-
-from core_settings.settings import INV_CURRENCY
-
-try:
-    from django.utils import importlib
-except ImportError:
-    import importlib
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 from core_settings import settings
+
+# setup unicode fonts
+pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
+pdfmetrics.registerFont(TTFont('VeraBd', 'VeraBd.ttf'))
+pdfmetrics.registerFont(TTFont('VeraIt', 'VeraIt.ttf'))
+pdfmetrics.registerFont(TTFont('VeraBI', 'VeraBI.ttf'))
 
 
 def format_currency(amount, tax=None):
@@ -46,20 +47,19 @@ def draw_header(canvas):
 
 def draw_address(canvas):
     """ Draws the business address """
-    business_details = (
+    business_details = [
         settings.COMPANY_TITLE,
-        u'STREET',
-        u'TOWN',
-        U'COUNTY',
-        U'POSTCODE',
-        U'COUNTRY',
-        u'',
-        u'',
-        u'Phone: +00 (0) 000 000 000',
-        u'Email: example@example.com',
-        u'Website: www.example.com',
-        u'Reg No: 00000000'
-    )
+        'Sector-21, Gandhinagar',
+        'Gujarat',
+        '382021',
+        'India',
+        '',
+        '',
+        'Phone: {}'.format(settings.COMPANY_CONTACT_NUMBER),
+        'Email: {}'.format(settings.COMPANY_EMAIL),
+        'Website: {}'.format(settings.COMPANY_WEBSITE),
+        'GST Registration No: {}'.format(settings.GST_NUMBER)
+    ]
     canvas.setFont('Helvetica', 9)
     textobject = canvas.beginText(13 * cm, -2.5 * cm)
     for line in business_details:
@@ -151,33 +151,43 @@ def draw_pdf(buffer, invoice):
     canvas.drawText(textobject)
 
     # Items
-    data = [[u'Quantity', u'Description', "Tax", "Amount", u'Total'], ]
+    data = [['Qty.', 'Item', "Unit\nPrice", "Discount", "Tax\nRate", "Tax\nType", "Tax\nAmount", "Net\nAmount", 'Total\nAmount'], ]
+    col_size = [1 * cm, 6.000 * cm, 2.00 * cm, 2.000 * cm, 1.000 * cm, 1.500 * cm, 2.00 * cm, 2.00 * cm, 2.00 * cm]
     for item in invoice.items.all():
         data.append([
             item.quantity,
-            item.cost.name,
+            item.cost.split_name(6 * 5),
+            format_currency(item.product_amount - item.tax_amount),
+            "-₹{}".format(item.calculate_discount),
             "{} %".format(item.cost.tax),
-            format_currency(item.cost.price.amount, tax=item.cost.tax),
-            format_currency(item.cost.price.amount)
+            '\n'.join(item.cost.get_tax_type_display().split("/")),
+            format_currency(item.tax_amount),
+            format_currency(item.get_effective_cost),
+            format_currency(item.get_total_effective_cost)
         ])
-    data.append([u'', u'', '', u'Total:', str(invoice.get_total)])
-    table = Table(data, colWidths=[2 * cm, 9 * cm, 2 * cm, 3 * cm, 3 * cm])
+    data.append(['', '', '', '', '', '', '', 'Total:', format_currency(invoice.get_total)])
+    table = Table(data, colWidths=col_size)  # 22 cm total
     table.setStyle([
-        ('FONT', (0, 0), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        # table header style
+        ('FONT', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BACKGROUND', (0, 0), (-1, 0), (0.8, 0.8, 0.8)),
+        # table content style
+        ('FONT', (0, 1), (-1, -1), 'Vera'),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
         ('TEXTCOLOR', (0, 0), (-1, -1), (0.2, 0.2, 0.2)),
         ('GRID', (0, 0), (-1, -2), 1, (0.7, 0.7, 0.7)),
         ('GRID', (-2, -1), (-1, -1), 1, (0.7, 0.7, 0.7)),
-        ('ALIGN', (-2, 0), (-1, -1), 'RIGHT'),
-        ('BACKGROUND', (0, 0), (-1, 0), (0.8, 0.8, 0.8)),
+        ('ALIGN', (-2, 0), (-1, -1), 'LEFT'),
     ])
-    tw, th, = table.wrapOn(canvas, 15 * cm, 19 * cm)
-    table.drawOn(canvas, 1 * cm, -8 * cm - th)
+    tw, th, = table.wrapOn(canvas, 15 * cm, 22 * cm)  # 19 cm by default
+    table.drawOn(canvas, 0.6 * cm, -8 * cm - th)
 
     canvas.showPage()
     canvas.save()
 
 
 if __name__ == "__main__":
-    location = os.path.join(settings.BASE_DIR, "invoice.pdf")
-    draw_pdf(location, Invoice())
+    from sale_record.models import SaleRecord
+    location = os.path.join(settings.INV_ROOT, "invoice.pdf")
+    draw_pdf(location, SaleRecord.objects.last())
