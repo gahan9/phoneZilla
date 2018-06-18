@@ -192,6 +192,9 @@ COPYRIGHT_SINCE = 2018
 COMPANY_EMAIL = "company@example.com"
 COMPANY_CONTACT_NUMBER = "+91 99991 99991"
 COMPANY_WEBSITE = ""
+COMPANY_ADDRESS_LINE_ONE = "Shop No. 5, R World 21,Sector-21"
+COMPANY_ADDRESS_LINE_TWO = "Gandhinagar, Gujarat-382021"
+COMPANY_COUNTRY = "India"
 
 # Invoice Config
 INV_ROOT = os.path.join(MEDIA_ROOT, "invoices")

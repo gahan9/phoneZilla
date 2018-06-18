@@ -46,14 +46,15 @@ JET_SIDE_MENU_ITEMS = [
     # {'app_label': 'authtoken', 'items': [
     #     {'name': 'token'},
     # ]},
-    {'app_label': 'auth', 'items': [
-        # {'name': 'group'},
-        {'name': 'user'},
-    ]},
+    # {'app_label': 'auth', 'items': [
+    #     {'name': 'user'},
+    # ]},
     {'app_label': 'inventory_management', 'items': [
-        # {'name': 'productrecord'},
-        # {'name': 'effectivecost'},
+        {'name': 'productrecord'},
         {'name': 'purchaserecord'},
-        # {'name': 'distributor'},
+    ]},
+    {'app_label': 'sale_record', 'items': [
+        {'name': 'customerdetail'},
+        {'name': 'salerecord'},
     ]},
 ]

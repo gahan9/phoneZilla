@@ -47,21 +47,31 @@ def draw_header(canvas):
 
 def draw_address(canvas):
     """ Draws the business address """
+    # write company name
+    canvas.setFont('Helvetica-Bold', 11)
+    textobject = canvas.beginText(13 * cm, -2.5 * cm)
+    textobject.textLine(settings.COMPANY_TITLE)
+    canvas.drawText(textobject)
+    # write GST Reg. No.
+    canvas.setFont('Helvetica-Bold', 10)
+    textobject = canvas.beginText(13 * cm, -7.5 * cm)
+    textobject.textLine('GST Registration No: {}'.format(settings.GST_NUMBER))
+    canvas.drawText(textobject)
+
+    # write company details
     business_details = [
-        settings.COMPANY_TITLE,
-        'Sector-21, Gandhinagar',
-        'Gujarat',
-        '382021',
-        'India',
+        settings.COMPANY_ADDRESS_LINE_ONE,
+        settings.COMPANY_ADDRESS_LINE_TWO,
+        settings.COMPANY_COUNTRY,
         '',
         '',
         'Phone: {}'.format(settings.COMPANY_CONTACT_NUMBER),
         'Email: {}'.format(settings.COMPANY_EMAIL),
-        'Website: {}'.format(settings.COMPANY_WEBSITE),
-        'GST Registration No: {}'.format(settings.GST_NUMBER)
     ]
+    if settings.COMPANY_WEBSITE:
+        business_details.append('Website: {}'.format(settings.COMPANY_WEBSITE))
     canvas.setFont('Helvetica', 9)
-    textobject = canvas.beginText(13 * cm, -2.5 * cm)
+    textobject = canvas.beginText(13 * cm, -3.0 * cm)
     for line in business_details:
         textobject.textLine(line)
     canvas.drawText(textobject)
@@ -79,27 +89,6 @@ def draw_footer(canvas):
     for line in note:
         textobject.textLine(line)
     canvas.drawText(textobject)
-
-
-class Address(object):
-    contact_name = "Person"
-    address_one = "socity"
-    address_two = "sec-16"
-    town = "Gandhinagar"
-    country = "India"
-    postcode = "382021"
-
-
-class Invoice(object):
-    address = Address()
-    invoice_id = "123"
-    invoice_date = "12 June 2018"
-    currency = "INR"
-    items = []
-    # address = "Gandhinagar"
-
-    def total(self):
-        return 556
 
 
 def draw_pdf(buffer, invoice):
