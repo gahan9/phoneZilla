@@ -201,7 +201,7 @@ INV_ROOT = os.path.join(MEDIA_ROOT, "invoices")
 if not os.path.exists(INV_ROOT):
     os.makedirs(INV_ROOT)
 # INV_LOGO = "http://icons.iconarchive.com/icons/graphicloads/100-flat-2/256/mobile-2-icon.png"  # Web Path
-INV_LOGO = STATIC_URL + "assets/logos/mobile-icon.png"
+INV_LOGO = os.path.join(STATICFILES_DIRS[0], "assets", "logos", "mobile-icon.png")
 INV_CURRENCY_SYMBOL = "₹"
 INV_CURRENCY_PREFIX = "INR"
 INV_CURRENCY = "Indian Rupees"
