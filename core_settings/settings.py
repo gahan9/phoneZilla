@@ -186,7 +186,7 @@ PRODUCT_MAKER = {
     "Mobile": ("Manufacturer", "Launched")
 }  # Product type may be book, software a specific hardware, groceries etc.
 PRODUCT_TYPE = "Mobile"
-COMPANY_TITLE = "PhoneZilla"  # Title of your company
+COMPANY_TITLE = "Phone Villa"  # Title of your company
 COMPANY_LOGO = "http://icons.iconarchive.com/icons/graphicloads/100-flat-2/256/mobile-2-icon.png"
 COPYRIGHT_SINCE = 2018
 COMPANY_EMAIL = "company@example.com"
