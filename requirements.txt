@@ -29,7 +29,7 @@ Pillow==5.0.0
 prompt-toolkit==1.0.15
 ptyprocess==0.5.2
 py-moneyed==0.7.0
-Pygments==2.2.0
+Pygments==2.7.4
 python-monkey-business==1.0.0
 pytz==2018.3
 requests==2.18.4
