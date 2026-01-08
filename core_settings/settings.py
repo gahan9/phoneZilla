@@ -50,8 +50,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djmoney',
     'nested_inline',
-    'easy_select2',
     'phonenumber_field',
+
     # 'import_export',
 ]
 
