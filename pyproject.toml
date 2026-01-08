@@ -61,4 +61,7 @@ dev = [
     "ruff>=0.14.10",
 ]
 
+[tool.setuptools]
+packages = ["main", "accounts", "sale_record", "core_settings", "inventory_management"]
+
 
