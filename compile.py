@@ -1,6 +1,11 @@
-from distutils.core import setup
-from distutils.extension import Extension
-from Cython.Distutils import build_ext
+from setuptools import setup, Extension
+# Note: Cython might still need build_ext, but distutils.core is gone.
+# Using Cython's build_ext if available.
+try:
+    from Cython.Distutils import build_ext
+except ImportError:
+    from setuptools.command.build_ext import build_ext
+
 
 ext_modules = [
     Extension("mymodule1",  ["mymodule1.py"]),

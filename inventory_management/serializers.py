@@ -1,8 +1,9 @@
 # coding=utf-8
 from rest_framework import serializers
 
-from inventory_management.models import *
-from main.serializers import *
+from .models import PurchaseRecord, ProductRecord, EffectiveCost, Distributor
+from main.serializers import BaseDistributorSerializer
+
 
 
 class PurchaseRecordSerializer(serializers.HyperlinkedModelSerializer):

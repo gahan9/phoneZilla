@@ -1,11 +1,11 @@
 # coding=utf-8
 from django.contrib import admin
 
-from easy_select2.utils import select2_modelform
 from nested_inline.admin import NestedModelAdmin
 
 from core_settings.settings import COMPANY_TITLE
-from .admin_inlines import *
+from .admin_inlines import EffectiveCostInline, PurchaseRecordInline
+
 
 __author__ = "Gahan Saraiya"
 

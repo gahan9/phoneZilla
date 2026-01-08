@@ -5,7 +5,11 @@ from django.views.generic import TemplateView
 
 from rest_framework import viewsets
 
-from inventory_management.serializers import *
+from .serializers import (
+    ProductRecordSerializer, EffectiveCostSerializer, PurchaseRecordSerializer, DistributorSerializer
+)
+from .models import ProductRecord, EffectiveCost, PurchaseRecord, Distributor
+
 
 __author__ = "Gahan Saraiya"
 

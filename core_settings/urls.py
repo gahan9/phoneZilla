@@ -23,7 +23,9 @@ urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
     path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     path('admin/', admin.site.urls),  # Django ADMIN URLS
+
     path('nested_admin/', include('nested_admin.urls')),
+
     path('accounts/', include('accounts.urls')),
     path('', include('inventory_management.urls')),
     path('sales/', include('sale_record.urls')),

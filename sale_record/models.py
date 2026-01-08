@@ -7,7 +7,7 @@ from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.urls import reverse_lazy
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 
 from main.models import *
@@ -158,7 +158,7 @@ class SaleRecord(BaseSaleRecord):
 
 @receiver(m2m_changed, sender=SaleRecord.items.through, dispatch_uid="update_stock_count")
 def update_stock(sender, instance, action, **kwargs):
-    if action is "post_add":
+    if action == "post_add":
         for item in instance.items.all():
             item.cost.available_stock -= item.quantity
             item.cost.save()

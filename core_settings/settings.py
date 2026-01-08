@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'jet.dashboard',
     'jet',
     'django.contrib.admin',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -53,6 +54,9 @@ INSTALLED_APPS = [
     'phonenumber_field',
     # 'import_export',
 ]
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -145,7 +149,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
+# USE_L10N = True  # Deprecated in Django 4.0 and removed in 5.0
 
 USE_TZ = True
 

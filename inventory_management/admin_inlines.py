@@ -1,7 +1,7 @@
 # coding=utf-8
-from django.contrib.admin.options import TabularInline
 from nested_inline.admin import NestedStackedInline
-from .models import *
+from .models import EffectiveCost, PurchaseRecord
+
 
 __author__ = "Gahan Saraiya"
 
