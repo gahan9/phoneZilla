@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "phonezilla"
 version = "0.1.0"
@@ -60,5 +64,8 @@ dev = [
     "pytest>=8.3.2",
     "ruff>=0.14.10",
 ]
+
+[tool.setuptools]
+packages = ["main", "accounts", "sale_record", "core_settings", "inventory_management"]
 
 
